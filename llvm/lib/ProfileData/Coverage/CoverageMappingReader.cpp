@@ -244,6 +244,7 @@ Error RawCoverageMappingReader::readMappingRegionsSubArray(
   unsigned LineStart = 0;
   for (size_t I = 0; I < NumRegions; ++I) {
     Counter C, C2;
+    uint64_t BIDX = 0, NC = 0, ID = 0, TID = 0, FID = 0;
     CounterMappingRegion::RegionKind Kind = CounterMappingRegion::CodeRegion;
 
     // Read the combined counter + region kind.
@@ -292,6 +293,27 @@ Error RawCoverageMappingReader::readMappingRegionsSubArray(
           if (auto Err = readCounter(C))
             return Err;
           if (auto Err = readCounter(C2))
+            return Err;
+          break;
+        case CounterMappingRegion::MCDCBranchRegion:
+          // For a MCDC Branch Region, read two successive counters and 3 IDs.
+          Kind = CounterMappingRegion::MCDCBranchRegion;
+          if (auto Err = readCounter(C))
+            return Err;
+          if (auto Err = readCounter(C2))
+            return Err;
+          if (auto Err = readIntMax(ID, std::numeric_limits<unsigned>::max()))
+            return Err;
+          if (auto Err = readIntMax(TID, std::numeric_limits<unsigned>::max()))
+            return Err;
+          if (auto Err = readIntMax(FID, std::numeric_limits<unsigned>::max()))
+            return Err;
+          break;
+        case CounterMappingRegion::MCDCDecisionRegion:
+          Kind = CounterMappingRegion::MCDCDecisionRegion;
+          if (auto Err = readIntMax(BIDX, std::numeric_limits<unsigned>::max()))
+            return Err;
+          if (auto Err = readIntMax(NC, std::numeric_limits<unsigned>::max()))
             return Err;
           break;
         default:
@@ -347,9 +369,14 @@ Error RawCoverageMappingReader::readMappingRegionsSubArray(
       dbgs() << "\n";
     });
 
-    auto CMR = CounterMappingRegion(C, C2, InferredFileID, ExpandedFileID,
-                                    LineStart, ColumnStart,
-                                    LineStart + NumLines, ColumnEnd, Kind);
+    auto CMR = CounterMappingRegion(
+        C, C2,
+        CounterMappingRegion::MCDCParameters{
+            static_cast<unsigned>(BIDX), static_cast<unsigned>(NC),
+            static_cast<unsigned>(ID), static_cast<unsigned>(TID),
+            static_cast<unsigned>(FID)},
+        InferredFileID, ExpandedFileID, LineStart, ColumnStart,
+        LineStart + NumLines, ColumnEnd, Kind);
     if (CMR.startLoc() > CMR.endLoc())
       return make_error<CoverageMapError>(
           coveragemap_error::malformed,
@@ -783,6 +810,7 @@ Expected<std::unique_ptr<CovMapFuncRecordReader>> CovMapFuncRecordReader::get(
   case CovMapVersion::Version4:
   case CovMapVersion::Version5:
   case CovMapVersion::Version6:
+  case CovMapVersion::Version7:
     // Decompress the name data.
     if (Error E = P.create(P.getNameData()))
       return std::move(E);
@@ -801,6 +829,9 @@ Expected<std::unique_ptr<CovMapFuncRecordReader>> CovMapFuncRecordReader::get(
     else if (Version == CovMapVersion::Version6)
       return std::make_unique<VersionedCovMapFuncRecordReader<
           CovMapVersion::Version6, IntPtrT, Endian>>(P, R, D, F);
+    else if (Version == CovMapVersion::Version7)
+      return std::make_unique<VersionedCovMapFuncRecordReader<
+          CovMapVersion::Version7, IntPtrT, Endian>>(P, R, D, F);
   }
   llvm_unreachable("Unsupported version");
 }
