@@ -279,7 +279,11 @@ too deeply).
    [32 x i8] c"..." ; Encoded data (dissected later)
   }, section "__llvm_covmap", align 8
 
-The current version of the format is version 6.
+The current version of the format is version 7.
+
+There is one difference between versions 7 and 6:
+
+* MC/DC and GAP regions
 
 There is one difference between versions 6 and 5:
 
@@ -562,14 +566,20 @@ Header
 
 or
 
-``[pseudo-counter]``
+``[pseudo-counter, optional info]``
 
-The header encodes the region's counter and the region's kind. A branch region
-will encode two counters.
+The header encodes the region's counter and the region's kind.
 
 The value of the counter's tag distinguishes between the counters and
-pseudo-counters --- if the tag is zero, than this header contains a
+pseudo-counters --- if the tag is zero, then this header contains a
 pseudo-counter, otherwise this header contains an ordinary counter.
+
+For certain region kinds, the header encodes more information besides
+``pseudo-counter`` itself.
+
+* A branch region will encode two extra counters
+
+  ``[pseudo-counter, counter, counter2]``
 
 Counter:
 """"""""
@@ -599,6 +609,9 @@ the ordinary counter. It has the following interpretation:
   * 0 - This mapping region is a code region with a counter of zero.
   * 2 - This mapping region is a skipped region.
   * 4 - This mapping region is a branch region.
+  * 4 - This mapping region is a branch region.
+  * 4 - This mapping region is a branch region.
+  * 4 - This mapping region is a branch region.
 
 .. _source range:
 
@@ -623,6 +636,7 @@ The source range record contains the following fields:
 * *columnEnd*: The ending column of the mapping region. If the high bit is set,
   the current mapping region is a gap area. A count for a gap area is only used
   as the line execution count if there are no other regions on a line.
+    * here
 
 Testing Format
 ==============
