@@ -452,6 +452,8 @@ void CoveragePrinterHTML::emitReportHeader(raw_ostream &OSRef,
                           "here") +
                         " for information about interpreting this report.");
 
+  OSRef << tag("p", a("#summary-table-end", "Go to the summary end\n", "summary-table-begin"));
+
   // Emit a table containing links to reports for each file in the covmapping.
   // Exclude files which don't contain any regions.
   OSRef << BeginCenteredDiv << BeginTable;
@@ -505,6 +507,8 @@ Error CoveragePrinterHTML::createIndexFile(
   }
   emitFileSummary(OSRef, "Totals", Totals, /*IsTotals=*/true);
   OSRef << EndTable << EndCenteredDiv;
+
+  OSRef << tag("p", a("#summary-table-begin", "Go to the summary begin\n", "summary-table-end"));
 
   // Emit links to files which don't contain any functions. These are normally
   // not very useful, but could be relevant for code which abuses the
