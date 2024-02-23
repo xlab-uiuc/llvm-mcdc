@@ -87,7 +87,8 @@ Column column(StringRef Str, unsigned Width, const T &Value) {
 
 // Specify the default column widths.
 size_t FileReportColumns[] = {25, 12, 18, 10, 12, 18, 10, 16, 16, 10,
-                              12, 18, 10, 12, 18, 10, 20, 21, 10};
+                              12, 18, 10, 12, 18, 10, 20, 21, 10,
+                              20};
 size_t FunctionReportColumns[] = {25, 10, 8, 8, 10, 8, 8, 10, 8, 8, 20, 8, 8};
 
 /// Adjust column widths to fit long file paths and function names.
@@ -294,6 +295,8 @@ void CoverageReport::render(const FileCoverageSummary &File,
   if (Options.ShowMCDCSummary) {
     OS << format("%*u", FileReportColumns[16],
                  (unsigned)File.MCDCCoverage.getNumPairs());
+    OS << format("%*u", FileReportColumns[19],
+                 (unsigned)File.MCDCCoverage.getNumDecisions());
     Options.colored_ostream(OS, LineCoverageColor)
         << format("%*u", FileReportColumns[17],
                   (unsigned)(File.MCDCCoverage.getNumPairs() -
@@ -540,6 +543,8 @@ void CoverageReport::renderFileReports(
        << column("Cover", FileReportColumns[15], Column::RightAlignment);
   if (Options.ShowMCDCSummary)
     OS << column("MC/DC Conditions", FileReportColumns[16],
+                 Column::RightAlignment)
+       << column("MC/DC Decisions", FileReportColumns[19],
                  Column::RightAlignment)
        << column("Missed Conditions", FileReportColumns[17],
                  Column::RightAlignment)
