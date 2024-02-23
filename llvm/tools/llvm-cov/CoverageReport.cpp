@@ -235,18 +235,18 @@ void CoverageReport::render(const FileCoverageSummary &File,
       OS << column("-", FileReportColumns[3], Column::RightAlignment);
   }
 
-  OS << format("%*u", FileReportColumns[4],
-               (unsigned)File.FunctionCoverage.getNumFunctions());
-  OS << format("%*u", FileReportColumns[5],
-               (unsigned)(File.FunctionCoverage.getNumFunctions() -
-                          File.FunctionCoverage.getExecuted()));
-  if (File.FunctionCoverage.getNumFunctions())
-    Options.colored_ostream(OS, FuncCoverageColor)
-        << format("%*.2f", FileReportColumns[6] - 1,
-                  File.FunctionCoverage.getPercentCovered())
-        << '%';
-  else
-    OS << column("-", FileReportColumns[6], Column::RightAlignment);
+  // OS << format("%*u", FileReportColumns[4],
+  //              (unsigned)File.FunctionCoverage.getNumFunctions());
+  // OS << format("%*u", FileReportColumns[5],
+  //              (unsigned)(File.FunctionCoverage.getNumFunctions() -
+  //                         File.FunctionCoverage.getExecuted()));
+  // if (File.FunctionCoverage.getNumFunctions())
+  //   Options.colored_ostream(OS, FuncCoverageColor)
+  //       << format("%*.2f", FileReportColumns[6] - 1,
+  //                 File.FunctionCoverage.getPercentCovered())
+  //       << '%';
+  // else
+  //   OS << column("-", FileReportColumns[6], Column::RightAlignment);
 
   if (Options.ShowInstantiationSummary) {
     OS << format("%*u", FileReportColumns[7],
@@ -263,18 +263,18 @@ void CoverageReport::render(const FileCoverageSummary &File,
       OS << column("-", FileReportColumns[9], Column::RightAlignment);
   }
 
-  OS << format("%*u", FileReportColumns[10],
-               (unsigned)File.LineCoverage.getNumLines());
-  Options.colored_ostream(OS, LineCoverageColor) << format(
-      "%*u", FileReportColumns[11], (unsigned)(File.LineCoverage.getNumLines() -
-                                               File.LineCoverage.getCovered()));
-  if (File.LineCoverage.getNumLines())
-    Options.colored_ostream(OS, LineCoverageColor)
-        << format("%*.2f", FileReportColumns[12] - 1,
-                  File.LineCoverage.getPercentCovered())
-        << '%';
-  else
-    OS << column("-", FileReportColumns[12], Column::RightAlignment);
+  // OS << format("%*u", FileReportColumns[10],
+  //              (unsigned)File.LineCoverage.getNumLines());
+  // Options.colored_ostream(OS, LineCoverageColor) << format(
+  //     "%*u", FileReportColumns[11], (unsigned)(File.LineCoverage.getNumLines() -
+  //                                              File.LineCoverage.getCovered()));
+  // if (File.LineCoverage.getNumLines())
+  //   Options.colored_ostream(OS, LineCoverageColor)
+  //       << format("%*.2f", FileReportColumns[12] - 1,
+  //                 File.LineCoverage.getPercentCovered())
+  //       << '%';
+  // else
+  //   OS << column("-", FileReportColumns[12], Column::RightAlignment);
 
   if (Options.ShowBranchSummary) {
     OS << format("%*u", FileReportColumns[13],
@@ -297,17 +297,17 @@ void CoverageReport::render(const FileCoverageSummary &File,
                  (unsigned)File.MCDCCoverage.getNumPairs());
     OS << format("%*u", FileReportColumns[19],
                  (unsigned)File.MCDCCoverage.getNumDecisions());
-    Options.colored_ostream(OS, LineCoverageColor)
-        << format("%*u", FileReportColumns[17],
-                  (unsigned)(File.MCDCCoverage.getNumPairs() -
-                             File.MCDCCoverage.getCoveredPairs()));
-    if (File.MCDCCoverage.getNumPairs())
-      Options.colored_ostream(OS, LineCoverageColor)
-          << format("%*.2f", FileReportColumns[18] - 1,
-                    File.MCDCCoverage.getPercentCovered())
-          << '%';
-    else
-      OS << column("-", FileReportColumns[18], Column::RightAlignment);
+    // Options.colored_ostream(OS, LineCoverageColor)
+    //     << format("%*u", FileReportColumns[17],
+    //               (unsigned)(File.MCDCCoverage.getNumPairs() -
+    //                          File.MCDCCoverage.getCoveredPairs()));
+    // if (File.MCDCCoverage.getNumPairs())
+    //   Options.colored_ostream(OS, LineCoverageColor)
+    //       << format("%*.2f", FileReportColumns[18] - 1,
+    //                 File.MCDCCoverage.getPercentCovered())
+    //       << '%';
+    // else
+    //   OS << column("-", FileReportColumns[18], Column::RightAlignment);
   }
 
   OS << "\n";
@@ -526,16 +526,16 @@ void CoverageReport::renderFileReports(
     OS << column("Regions", FileReportColumns[1], Column::RightAlignment)
        << column("Missed Regions", FileReportColumns[2], Column::RightAlignment)
        << column("Cover", FileReportColumns[3], Column::RightAlignment);
-  OS << column("Functions", FileReportColumns[4], Column::RightAlignment)
-     << column("Missed Functions", FileReportColumns[5], Column::RightAlignment)
-     << column("Executed", FileReportColumns[6], Column::RightAlignment);
+  // OS << column("Functions", FileReportColumns[4], Column::RightAlignment)
+  //    << column("Missed Functions", FileReportColumns[5], Column::RightAlignment)
+  //    << column("Executed", FileReportColumns[6], Column::RightAlignment);
   if (Options.ShowInstantiationSummary)
     OS << column("Instantiations", FileReportColumns[7], Column::RightAlignment)
        << column("Missed Insts.", FileReportColumns[8], Column::RightAlignment)
        << column("Executed", FileReportColumns[9], Column::RightAlignment);
-  OS << column("Lines", FileReportColumns[10], Column::RightAlignment)
-     << column("Missed Lines", FileReportColumns[11], Column::RightAlignment)
-     << column("Cover", FileReportColumns[12], Column::RightAlignment);
+  // OS << column("Lines", FileReportColumns[10], Column::RightAlignment)
+  //    << column("Missed Lines", FileReportColumns[11], Column::RightAlignment)
+  //    << column("Cover", FileReportColumns[12], Column::RightAlignment);
   if (Options.ShowBranchSummary)
     OS << column("Branches", FileReportColumns[13], Column::RightAlignment)
        << column("Missed Branches", FileReportColumns[14],
@@ -546,9 +546,9 @@ void CoverageReport::renderFileReports(
                  Column::RightAlignment)
        << column("MC/DC Decisions", FileReportColumns[19],
                  Column::RightAlignment)
-       << column("Missed Conditions", FileReportColumns[17],
+       /*<< column("Missed Conditions", FileReportColumns[17],
                  Column::RightAlignment)
-       << column("Cover", FileReportColumns[18], Column::RightAlignment);
+       << column("Cover", FileReportColumns[18], Column::RightAlignment)*/;
   OS << "\n";
   renderDivider(FileReportColumns, OS);
   OS << "\n";
