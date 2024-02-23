@@ -156,7 +156,7 @@ FunctionCoverageSummary::get(const CoverageMapping &CM, // NOTE A function insta
 
 FunctionCoverageSummary
 FunctionCoverageSummary::get(const InstantiationGroup &Group,
-                             ArrayRef<FunctionCoverageSummary> Summaries) { // NOTE Merge all function instances
+                             ArrayRef<FunctionCoverageSummary> Summaries, bool &SomethingWrong) { // NOTE Merge all function instances
   std::string Name;
   if (Group.hasName()) {
     Name = std::string(Group.getName());
@@ -165,6 +165,9 @@ FunctionCoverageSummary::get(const InstantiationGroup &Group,
     OS << "Definition at line " << Group.getLine() << ", column "
        << Group.getColumn();
   }
+
+  SomethingWrong = false;
+  bool SomethingWrongForASingleMerge;
 
   FunctionCoverageSummary Summary(Name);
   Summary.ExecutionCount = Group.getTotalExecutionCount();
@@ -176,7 +179,9 @@ FunctionCoverageSummary::get(const InstantiationGroup &Group,
     Summary.RegionCoverage.merge(FCS.RegionCoverage);
     Summary.LineCoverage.merge(FCS.LineCoverage);
     Summary.BranchCoverage.merge(FCS.BranchCoverage);
-    Summary.MCDCCoverage.merge(FCS.MCDCCoverage);
+    SomethingWrongForASingleMerge = false;
+    Summary.MCDCCoverage.merge(FCS.MCDCCoverage, SomethingWrongForASingleMerge);
+    SomethingWrong = SomethingWrongForASingleMerge || SomethingWrong;
   }
   return Summary;
 }

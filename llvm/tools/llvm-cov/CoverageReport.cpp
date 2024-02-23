@@ -455,8 +455,22 @@ void CoverageReport::prepareSingleFileReport(const StringRef Filename,
     if (InstantiationSummaries.empty())
       continue;
 
+    bool SomethingWrong = false;
     auto GroupSummary =
-        FunctionCoverageSummary::get(Group, InstantiationSummaries);
+        FunctionCoverageSummary::get(Group, InstantiationSummaries, SomethingWrong);
+    if (SomethingWrong) {
+      printf("%s:", Filename.str().c_str());
+      printf("%u\n", Group.getLine());
+    }
+
+    // Problematic files in kernel codebase:
+    //
+    //   fs/binfmt_elf.c:595
+    //   fs/binfmt_elf.c:824
+    //   include/trace/trace_events.h:451
+    //   include/trace/trace_events.h:886
+    //   include/trace/perf.h:56
+    //   include/linux/tracepoint.h:245
 
     if (Options.Debug)
       outs() << "InstantiationGroup: " << GroupSummary.Name << " with "

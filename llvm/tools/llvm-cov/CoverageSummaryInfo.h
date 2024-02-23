@@ -184,7 +184,10 @@ public:
   }
 
   // NOTE Merge function instances
-  void merge(const MCDCCoverageInfo &RHS) {
+  void merge(const MCDCCoverageInfo &RHS, bool &SomethingWrong) {
+
+    SomethingWrong = false;
+
     CoveredPairs = std::max(CoveredPairs, RHS.CoveredPairs);
 
     // It's possible that the numbers for a function instance are zero when an
@@ -209,9 +212,17 @@ public:
     // In the instance in bar.c, func() is not invoked:  0 decision, 0 condition
 
     if (NumPairs && RHS.NumPairs)
-      assert(NumPairs == RHS.NumPairs);
+      // assert(NumPairs == RHS.NumPairs);
+      if (NumPairs != RHS.NumPairs) {
+        SomethingWrong = true;
+        printf("#cond unexpected: %lu %lu\n", NumPairs, RHS.NumPairs);
+      }
     if (NumDecisions && RHS.NumDecisions)
-      assert(NumDecisions == RHS.NumDecisions);
+      // assert(NumDecisions == RHS.NumDecisions);
+      if (NumDecisions != RHS.NumDecisions) {
+        SomethingWrong = true;
+        printf("#decision unexpected: %lu %lu\n", NumDecisions, RHS.NumDecisions);
+      }
 
     NumPairs = std::max(NumPairs, RHS.NumPairs);
     NumDecisions = std::max(NumDecisions, RHS.NumDecisions);
@@ -315,7 +326,7 @@ struct FunctionCoverageSummary {
   /// given a list of summaries for each instantiation in \p Summaries.
   static FunctionCoverageSummary
   get(const coverage::InstantiationGroup &Group,
-      ArrayRef<FunctionCoverageSummary> Summaries);
+      ArrayRef<FunctionCoverageSummary> Summaries, bool &SomethingWrong);
 };
 
 /// A summary of file's code coverage.
