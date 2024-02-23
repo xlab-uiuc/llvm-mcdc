@@ -66,13 +66,34 @@ sumMCDCPairs(const ArrayRef<MCDCRecord> &Records) {
 
 static void
 sumMCDCPairs(const ArrayRef<MCDCRecord> &Records,
-             size_t &NumPairs, size_t &CoveredPairs, size_t &NumDecisions) {
+             size_t &NumPairs, size_t &CoveredPairs, size_t &NumDecisions,
+             size_t &NumDecisions2, size_t &NumDecisions3, size_t &NumDecisions4,
+             size_t &NumDecisions5, size_t &NumDecisions6) {
   NumPairs = 0;
   CoveredPairs = 0;
   NumDecisions = 0;
   for (const auto &Record : Records) {
     ++NumDecisions;
     const auto NumConditions = Record.getNumConditions();
+    switch(NumConditions) {
+    case 2:
+      ++NumDecisions2;
+      break;
+    case 3:
+      ++NumDecisions3;
+      break;
+    case 4:
+      ++NumDecisions4;
+      break;
+    case 5:
+      ++NumDecisions5;
+      break;
+    case 6:
+      ++NumDecisions6;
+      break;
+    default:
+      assert(false && "Encountered a decision whose num of conditions isn't {2, 3, 4, 5, 6}");
+    }
     for (unsigned C = 0; C < NumConditions; C++) {
       if (!Record.isCondFolded(C))
         ++NumPairs;
@@ -113,15 +134,24 @@ FunctionCoverageSummary::get(const CoverageMapping &CM, // NOTE A function insta
 
   size_t NumPairs = 0, CoveredPairs = 0;
   size_t NumDecisions = 0;
+  size_t NumDecisions2 = 0;
+  size_t NumDecisions3 = 0;
+  size_t NumDecisions4 = 0;
+  size_t NumDecisions5 = 0;
+  size_t NumDecisions6 = 0;
   // std::tie(NumPairs, CoveredPairs) = sumMCDCPairs(CD.getMCDCRecords());
-  sumMCDCPairs(CD.getMCDCRecords(), NumPairs, CoveredPairs, NumDecisions);
+  sumMCDCPairs(CD.getMCDCRecords(), NumPairs, CoveredPairs, NumDecisions,
+                                    NumDecisions2, NumDecisions3, NumDecisions4,
+                                    NumDecisions5, NumDecisions6);
 
   return FunctionCoverageSummary(
       Function.Name, Function.ExecutionCount,
       RegionCoverageInfo(CoveredRegions, NumCodeRegions),
       LineCoverageInfo(CoveredLines, NumLines),
       BranchCoverageInfo(CoveredBranches, NumBranches),
-      MCDCCoverageInfo(CoveredPairs, NumPairs, NumDecisions));
+      MCDCCoverageInfo(CoveredPairs, NumPairs, NumDecisions,
+                                     NumDecisions2,NumDecisions3,NumDecisions4,
+                                     NumDecisions5,NumDecisions6));
 }
 
 FunctionCoverageSummary

@@ -152,11 +152,22 @@ class MCDCCoverageInfo {
 
   size_t NumDecisions;
 
-public:
-  MCDCCoverageInfo() : CoveredPairs(0), NumPairs(0), NumDecisions(0) {}
+  size_t NumDecisions2;
+  size_t NumDecisions3;
+  size_t NumDecisions4;
+  size_t NumDecisions5;
+  size_t NumDecisions6;
 
-  MCDCCoverageInfo(size_t CoveredPairs, size_t NumPairs, size_t NumDecisions)
-      : CoveredPairs(CoveredPairs), NumPairs(NumPairs), NumDecisions(NumDecisions) {
+public:
+  MCDCCoverageInfo() : CoveredPairs(0), NumPairs(0), NumDecisions(0),
+                       NumDecisions2(0), NumDecisions3(0),  NumDecisions4(0), NumDecisions5(0), NumDecisions6(0) {}
+
+  MCDCCoverageInfo(size_t CoveredPairs, size_t NumPairs, size_t NumDecisions,
+                   size_t NumDecisions2, size_t NumDecisions3, size_t NumDecisions4,
+                   size_t NumDecisions5, size_t NumDecisions6)
+      : CoveredPairs(CoveredPairs), NumPairs(NumPairs), NumDecisions(NumDecisions),
+        NumDecisions2(NumDecisions2), NumDecisions3(NumDecisions3), NumDecisions4(NumDecisions4),
+        NumDecisions5(NumDecisions5), NumDecisions6(NumDecisions6) {
     assert(CoveredPairs <= NumPairs && "Covered pairs over-counted");
   }
 
@@ -164,6 +175,11 @@ public:
     CoveredPairs += RHS.CoveredPairs;
     NumPairs += RHS.NumPairs;
     NumDecisions += RHS.NumDecisions;
+    NumDecisions2 += RHS.NumDecisions2;
+    NumDecisions3 += RHS.NumDecisions3;
+    NumDecisions4 += RHS.NumDecisions4;
+    NumDecisions5 += RHS.NumDecisions5;
+    NumDecisions6 += RHS.NumDecisions6;
     return *this;
   }
 
@@ -199,6 +215,12 @@ public:
 
     NumPairs = std::max(NumPairs, RHS.NumPairs);
     NumDecisions = std::max(NumDecisions, RHS.NumDecisions);
+
+    NumDecisions2 = std::max(NumDecisions2, RHS.NumDecisions2);
+    NumDecisions3 = std::max(NumDecisions3, RHS.NumDecisions3);
+    NumDecisions4 = std::max(NumDecisions4, RHS.NumDecisions4);
+    NumDecisions5 = std::max(NumDecisions5, RHS.NumDecisions5);
+    NumDecisions6 = std::max(NumDecisions6, RHS.NumDecisions5);
   }
 
   size_t getCoveredPairs() const { return CoveredPairs; }
@@ -206,6 +228,12 @@ public:
   size_t getNumPairs() const { return NumPairs; }
 
   size_t getNumDecisions() const { return NumDecisions; }
+
+  size_t getNumDecisions2() const { return NumDecisions2; }
+  size_t getNumDecisions3() const { return NumDecisions3; }
+  size_t getNumDecisions4() const { return NumDecisions4; }
+  size_t getNumDecisions5() const { return NumDecisions5; }
+  size_t getNumDecisions6() const { return NumDecisions6; }
 
   bool isFullyCovered() const { return CoveredPairs == NumPairs; }
 
