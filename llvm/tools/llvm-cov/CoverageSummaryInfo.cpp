@@ -69,11 +69,13 @@ sumMCDCPairs(const ArrayRef<MCDCRecord> &Records,
              size_t &NumPairs, size_t &CoveredPairs, size_t &NumDecisions,
              size_t &NumDecisions2, size_t &NumDecisions3, size_t &NumDecisions4,
              size_t &NumDecisions5, size_t &NumDecisions6,
-             size_t &NumPairsAll) {
+             size_t &NumPairsAll,
+             size_t &NumDecisionsWithAtLeastTwoNonConstCond) {
   NumPairs = 0;
   CoveredPairs = 0;
   NumDecisions = 0;
   NumPairsAll = 0;
+  NumDecisionsWithAtLeastTwoNonConstCond = 0;
   for (const auto &Record : Records) {
     ++NumDecisions;
     const auto NumConditions = Record.getNumConditions();
@@ -96,13 +98,18 @@ sumMCDCPairs(const ArrayRef<MCDCRecord> &Records,
     default:
       assert(false && "Encountered a decision whose num of conditions isn't {2, 3, 4, 5, 6}");
     }
+    size_t NonConstCondInThisDecision = 0;
     for (unsigned C = 0; C < NumConditions; C++) {
       ++NumPairsAll;
-      if (!Record.isCondFolded(C))
+      if (!Record.isCondFolded(C)) {
         ++NumPairs;
+        ++NonConstCondInThisDecision;
+      }
       if (Record.isConditionIndependencePairCovered(C))
         ++CoveredPairs;
     }
+    if (NonConstCondInThisDecision >= 2)
+      ++NumDecisionsWithAtLeastTwoNonConstCond;
   }
 }
 
@@ -143,11 +150,13 @@ FunctionCoverageSummary::get(const CoverageMapping &CM, // NOTE A function insta
   size_t NumDecisions5 = 0;
   size_t NumDecisions6 = 0;
   size_t NumPairsAll = 0;
+  size_t NumDecisionsWithAtLeastTwoNonConstCond = 0;
   // std::tie(NumPairs, CoveredPairs) = sumMCDCPairs(CD.getMCDCRecords());
   sumMCDCPairs(CD.getMCDCRecords(), NumPairs, CoveredPairs, NumDecisions,
                                     NumDecisions2, NumDecisions3, NumDecisions4,
                                     NumDecisions5, NumDecisions6,
-                                    NumPairsAll);
+                                    NumPairsAll,
+                                    NumDecisionsWithAtLeastTwoNonConstCond);
 
   return FunctionCoverageSummary(
       Function.Name, Function.ExecutionCount,
@@ -157,7 +166,8 @@ FunctionCoverageSummary::get(const CoverageMapping &CM, // NOTE A function insta
       MCDCCoverageInfo(CoveredPairs, NumPairs, NumDecisions,
                                      NumDecisions2,NumDecisions3,NumDecisions4,
                                      NumDecisions5,NumDecisions6,
-                                     NumPairsAll));
+                                     NumPairsAll,
+                                     NumDecisionsWithAtLeastTwoNonConstCond));
 }
 
 FunctionCoverageSummary

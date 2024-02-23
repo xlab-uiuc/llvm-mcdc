@@ -160,19 +160,24 @@ class MCDCCoverageInfo {
 
   size_t NumPairsAll;
 
+  size_t NumDecisionsWithAtLeastTwoNonConstCond;
+
 public:
   MCDCCoverageInfo() : CoveredPairs(0), NumPairs(0), NumDecisions(0),
                        NumDecisions2(0), NumDecisions3(0),  NumDecisions4(0), NumDecisions5(0), NumDecisions6(0),
-                       NumPairsAll(0) {}
+                       NumPairsAll(0),
+                       NumDecisionsWithAtLeastTwoNonConstCond(0) {}
 
   MCDCCoverageInfo(size_t CoveredPairs, size_t NumPairs, size_t NumDecisions,
                    size_t NumDecisions2, size_t NumDecisions3, size_t NumDecisions4,
                    size_t NumDecisions5, size_t NumDecisions6,
-                   size_t NumPairsAll)
+                   size_t NumPairsAll,
+                   size_t NumDecisionsWithAtLeastTwoNonConstCond)
       : CoveredPairs(CoveredPairs), NumPairs(NumPairs), NumDecisions(NumDecisions),
         NumDecisions2(NumDecisions2), NumDecisions3(NumDecisions3), NumDecisions4(NumDecisions4),
         NumDecisions5(NumDecisions5), NumDecisions6(NumDecisions6),
-        NumPairsAll(NumPairsAll) {
+        NumPairsAll(NumPairsAll),
+        NumDecisionsWithAtLeastTwoNonConstCond(NumDecisionsWithAtLeastTwoNonConstCond) {
     assert(CoveredPairs <= NumPairs && "Covered pairs over-counted");
   }
 
@@ -185,6 +190,7 @@ public:
     NumDecisions4 += RHS.NumDecisions4;
     NumDecisions5 += RHS.NumDecisions5;
     NumDecisions6 += RHS.NumDecisions6;
+    NumDecisionsWithAtLeastTwoNonConstCond += RHS.NumDecisionsWithAtLeastTwoNonConstCond;
     NumPairsAll += RHS.NumPairsAll;
     return *this;
   }
@@ -239,6 +245,8 @@ public:
     NumDecisions5 = std::max(NumDecisions5, RHS.NumDecisions5);
     NumDecisions6 = std::max(NumDecisions6, RHS.NumDecisions5);
 
+    NumDecisionsWithAtLeastTwoNonConstCond = std::max(NumDecisionsWithAtLeastTwoNonConstCond, RHS.NumDecisionsWithAtLeastTwoNonConstCond);
+
     NumPairsAll = std::max(NumPairsAll, RHS.NumPairsAll);
   }
 
@@ -253,6 +261,8 @@ public:
   size_t getNumDecisions4() const { return NumDecisions4; }
   size_t getNumDecisions5() const { return NumDecisions5; }
   size_t getNumDecisions6() const { return NumDecisions6; }
+
+  size_t getNumDecisionsWithAtLeastTwoNonConstCond() const { return NumDecisionsWithAtLeastTwoNonConstCond; }
 
   size_t getNumPairsAll() const { return NumPairsAll; }
 
