@@ -150,29 +150,62 @@ class MCDCCoverageInfo {
   /// The total number of Independence Pairs in a function/file.
   size_t NumPairs;
 
-public:
-  MCDCCoverageInfo() : CoveredPairs(0), NumPairs(0) {}
+  size_t NumDecisions;
 
-  MCDCCoverageInfo(size_t CoveredPairs, size_t NumPairs)
-      : CoveredPairs(CoveredPairs), NumPairs(NumPairs) {
+public:
+  MCDCCoverageInfo() : CoveredPairs(0), NumPairs(0), NumDecisions(0) {}
+
+  MCDCCoverageInfo(size_t CoveredPairs, size_t NumPairs, size_t NumDecisions)
+      : CoveredPairs(CoveredPairs), NumPairs(NumPairs), NumDecisions(NumDecisions) {
     assert(CoveredPairs <= NumPairs && "Covered pairs over-counted");
   }
 
   MCDCCoverageInfo &operator+=(const MCDCCoverageInfo &RHS) {
     CoveredPairs += RHS.CoveredPairs;
     NumPairs += RHS.NumPairs;
+    NumDecisions += RHS.NumDecisions;
     return *this;
   }
 
   // NOTE Merge function instances
   void merge(const MCDCCoverageInfo &RHS) {
     CoveredPairs = std::max(CoveredPairs, RHS.CoveredPairs);
+
+    // It's possible that the numbers for a function instance are zero when an
+    // inline function is defined but never *invoked* anywhere else. Note being
+    // "invoked" is different from being "executed". For example
+    //
+    // inline.h
+    //
+    //   static inline void func(void) { int x; x && x; }
+    //
+    // foo.c
+    //
+    //   #include "inline.h"
+    //   void foo(void) { if (0) func(); }
+    //
+    // bar.c
+    //
+    //   #include "inline.h"
+    //   void bar(void) { }
+    //
+    // In the instance in foo.c, func() is not executed: 1 decision, 2 conditions
+    // In the instance in bar.c, func() is not invoked:  0 decision, 0 condition
+
+    if (NumPairs && RHS.NumPairs)
+      assert(NumPairs == RHS.NumPairs);
+    if (NumDecisions && RHS.NumDecisions)
+      assert(NumDecisions == RHS.NumDecisions);
+
     NumPairs = std::max(NumPairs, RHS.NumPairs);
+    NumDecisions = std::max(NumDecisions, RHS.NumDecisions);
   }
 
   size_t getCoveredPairs() const { return CoveredPairs; }
 
   size_t getNumPairs() const { return NumPairs; }
+
+  size_t getNumDecisions() const { return NumDecisions; }
 
   bool isFullyCovered() const { return CoveredPairs == NumPairs; }
 
