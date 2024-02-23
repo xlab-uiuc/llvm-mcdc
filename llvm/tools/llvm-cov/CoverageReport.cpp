@@ -297,15 +297,15 @@ void CoverageReport::render(const FileCoverageSummary &File,
                  (unsigned)File.MCDCCoverage.getNumPairs());
     OS << format("%*u", FileReportColumns[19],
                  (unsigned)File.MCDCCoverage.getNumDecisions());
-    OS << format("%*u", 4,
+    OS << format("%*u", 10,
                  (unsigned)File.MCDCCoverage.getNumDecisions2());
-    OS << format("%*u", 4,
+    OS << format("%*u", 10,
                  (unsigned)File.MCDCCoverage.getNumDecisions3());
-    OS << format("%*u", 4,
+    OS << format("%*u", 10,
                  (unsigned)File.MCDCCoverage.getNumDecisions4());
-    OS << format("%*u", 4,
+    OS << format("%*u", 10,
                  (unsigned)File.MCDCCoverage.getNumDecisions5());
-    OS << format("%*u", 4,
+    OS << format("%*u", 10,
                  (unsigned)File.MCDCCoverage.getNumDecisions6());
     // Options.colored_ostream(OS, LineCoverageColor)
     //     << format("%*u", FileReportColumns[17],
@@ -570,11 +570,11 @@ void CoverageReport::renderFileReports(
                  Column::RightAlignment)
        << column("MC/DC Decisions", FileReportColumns[19],
                  Column::RightAlignment)
-       << column("2", 4, Column::RightAlignment)
-       << column("3", 4, Column::RightAlignment)
-       << column("4", 4, Column::RightAlignment)
-       << column("5", 4, Column::RightAlignment)
-       << column("6", 4, Column::RightAlignment)
+       << column("2", 10, Column::RightAlignment)
+       << column("3", 10, Column::RightAlignment)
+       << column("4", 10, Column::RightAlignment)
+       << column("5", 10, Column::RightAlignment)
+       << column("6", 10, Column::RightAlignment)
        /*<< column("Missed Conditions", FileReportColumns[17],
                  Column::RightAlignment)
        << column("Cover", FileReportColumns[18], Column::RightAlignment)*/;
