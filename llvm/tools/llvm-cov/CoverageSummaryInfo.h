@@ -164,6 +164,7 @@ public:
     return *this;
   }
 
+  // NOTE Merge function instances
   void merge(const MCDCCoverageInfo &RHS) {
     CoveredPairs = std::max(CoveredPairs, RHS.CoveredPairs);
     NumPairs = std::max(NumPairs, RHS.NumPairs);
@@ -279,7 +280,7 @@ struct FileCoverageSummary {
     return *this;
   }
 
-  void addFunction(const FunctionCoverageSummary &Function) {
+  void addFunction(const FunctionCoverageSummary &Function) { // NOTE Add function (all instances merged)
     RegionCoverage += Function.RegionCoverage;
     LineCoverage += Function.LineCoverage;
     BranchCoverage += Function.BranchCoverage;

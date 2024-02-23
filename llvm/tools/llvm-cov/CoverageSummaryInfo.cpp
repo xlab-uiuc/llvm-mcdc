@@ -44,6 +44,8 @@ static void sumBranchExpansions(size_t &NumBranches, size_t &CoveredBranches,
   }
 }
 
+// NOTE Aggregate decisions in a function instance
+
 static std::pair<size_t, size_t>
 sumMCDCPairs(const ArrayRef<MCDCRecord> &Records) {
   size_t NumPairs = 0, CoveredPairs = 0;
@@ -60,7 +62,7 @@ sumMCDCPairs(const ArrayRef<MCDCRecord> &Records) {
 }
 
 FunctionCoverageSummary
-FunctionCoverageSummary::get(const CoverageMapping &CM,
+FunctionCoverageSummary::get(const CoverageMapping &CM, // NOTE A function instantiation
                              const coverage::FunctionRecord &Function) {
   // Compute the region coverage.
   size_t NumCodeRegions = 0, CoveredRegions = 0;
@@ -101,7 +103,7 @@ FunctionCoverageSummary::get(const CoverageMapping &CM,
 
 FunctionCoverageSummary
 FunctionCoverageSummary::get(const InstantiationGroup &Group,
-                             ArrayRef<FunctionCoverageSummary> Summaries) {
+                             ArrayRef<FunctionCoverageSummary> Summaries) { // NOTE Merge all function instances
   std::string Name;
   if (Group.hasName()) {
     Name = std::string(Group.getName());

@@ -425,6 +425,7 @@ void CoverageReport::renderFunctionReports(ArrayRef<std::string> Files,
   }
 }
 
+// NOTE A file
 void CoverageReport::prepareSingleFileReport(const StringRef Filename,
     const coverage::CoverageMapping *Coverage,
     const CoverageViewOptions &Options, const unsigned LCP,
