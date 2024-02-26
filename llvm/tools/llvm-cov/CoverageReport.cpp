@@ -299,6 +299,8 @@ void CoverageReport::render(const FileCoverageSummary &File,
                  (unsigned)File.MCDCCoverage.getNumPairsAll());
     OS << format("%*u", FileReportColumns[19],
                  (unsigned)File.MCDCCoverage.getNumDecisions());
+    OS << format("%*u", 20,
+                 (unsigned)File.MCDCCoverage.getNumDecisionsWithAtLeastTwoNonConstCond());
     OS << format("%*u", 10,
                  (unsigned)File.MCDCCoverage.getNumDecisions2());
     OS << format("%*u", 10,
@@ -573,6 +575,8 @@ void CoverageReport::renderFileReports(
        << column("MC/DC All Conditions", 20,
                  Column::RightAlignment)
        << column("MC/DC Decisions", FileReportColumns[19],
+                 Column::RightAlignment)
+       << column("MC/DC Decisions (*)", 20,
                  Column::RightAlignment)
        << column("2", 10, Column::RightAlignment)
        << column("3", 10, Column::RightAlignment)
