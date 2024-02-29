@@ -243,7 +243,7 @@ public:
     NumDecisions3 = std::max(NumDecisions3, RHS.NumDecisions3);
     NumDecisions4 = std::max(NumDecisions4, RHS.NumDecisions4);
     NumDecisions5 = std::max(NumDecisions5, RHS.NumDecisions5);
-    NumDecisions6 = std::max(NumDecisions6, RHS.NumDecisions5);
+    NumDecisions6 = std::max(NumDecisions6, RHS.NumDecisions6);
 
     NumDecisionsWithAtLeastTwoNonConstCond = std::max(NumDecisionsWithAtLeastTwoNonConstCond, RHS.NumDecisionsWithAtLeastTwoNonConstCond);
 
