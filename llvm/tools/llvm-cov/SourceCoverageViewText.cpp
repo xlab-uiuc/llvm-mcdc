@@ -351,6 +351,11 @@ void SourceCoverageViewText::renderMCDCView(raw_ostream &OS, MCDCView &MRV,
     renderLinePrefix(OS, ViewDepth);
     OS << "\n";
 
+    renderLinePrefix(OS, ViewDepth);
+    OS << "  " << Record.FuncName << "\n";
+    renderLinePrefix(OS, ViewDepth);
+    OS << "\n";
+
     // Display MC/DC Information.
     renderLinePrefix(OS, ViewDepth);
     OS << "  Number of Conditions: " << Record.getNumConditions() << "\n";

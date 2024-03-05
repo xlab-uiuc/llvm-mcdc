@@ -989,6 +989,7 @@ void SourceCoverageViewHTML::renderMCDCView(raw_ostream &OS, MCDCView &MRV,
   for (auto &Record : MRV.Records) {
     OS << BeginExpansionDiv;
     OS << BeginPre;
+    OS << "  " << Record.FuncName << "\n\n";
     OS << "  MC/DC Decision Region (";
 
     // Display Line + Column information.

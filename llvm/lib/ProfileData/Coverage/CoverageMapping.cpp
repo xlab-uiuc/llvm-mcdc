@@ -1405,9 +1405,17 @@ CoverageData CoverageMapping::getCoverageForFile(StringRef Filename) const {
       if (FileIDs.test(CR.FileID) && (CR.FileID == CR.ExpandedFileID))
         FileCoverage.BranchRegions.push_back(CR);
     // Capture MCDC records specific to the function.
-    for (const auto &MR : Function.MCDCRecords)
-      if (FileIDs.test(MR.getDecisionRegion().FileID))
+    // FIXME This is so far the most convenient place I can find where the function
+    //       name is easily available. Can this assignment/copy happen even earlier?
+    //       1. Earlier in visualization, e.g. ctor of MCDCRecord, so that here we
+    //          continue using const and &
+    //       2. Front end
+    for (auto MR : Function.MCDCRecords) {
+      if (FileIDs.test(MR.getDecisionRegion().FileID)) {
+        MR.FuncName = Function.Name;
         FileCoverage.MCDCRecords.push_back(MR);
+      }
+    }
   }
 
   LLVM_DEBUG(dbgs() << "Emitting segments for file: " << Filename << "\n");
