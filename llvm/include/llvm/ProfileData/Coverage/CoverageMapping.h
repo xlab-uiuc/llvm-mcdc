@@ -532,6 +532,36 @@ public:
     return OS.str();
   }
 
+  size_t getDecisionCovered() {
+    unsigned NumTestVectors = getNumTestVectors();
+    if (!NumTestVectors)
+      return 0;
+    bool TrueBranchTaken = false;
+    bool FalseBranchTaken = false;
+    for (unsigned i = 0; i < NumTestVectors; i++) {
+      switch (getTVResult(i)) {
+      case MCDC_True:
+        TrueBranchTaken = true;
+        break;
+      case MCDC_False:
+        FalseBranchTaken = true;
+        break;
+      case MCDC_DontCare:
+        llvm_unreachable("Test vector result should be either true or false.");
+      }
+    }
+    if (TrueBranchTaken)
+      if (FalseBranchTaken)
+        return 2;
+      else
+        return 1;
+    else
+      if (FalseBranchTaken)
+        return 1;
+      else
+        return 0;
+  }
+
   float getDecisionPercentCovered() {
     unsigned NumTestVectors = getNumTestVectors();
     if (!NumTestVectors)

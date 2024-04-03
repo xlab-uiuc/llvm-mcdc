@@ -150,36 +150,57 @@ class MCDCCoverageInfo {
   /// The total number of Independence Pairs in a function/file.
   size_t NumPairs;
 
-public:
-  MCDCCoverageInfo() : CoveredPairs(0), NumPairs(0) {}
+  size_t CoveredDecisions;
+  size_t NumDecisions;
 
-  MCDCCoverageInfo(size_t CoveredPairs, size_t NumPairs)
-      : CoveredPairs(CoveredPairs), NumPairs(NumPairs) {
+public:
+  MCDCCoverageInfo() : CoveredPairs(0), NumPairs(0), CoveredDecisions(0), NumDecisions(0) {}
+
+  MCDCCoverageInfo(size_t CoveredPairs, size_t NumPairs, size_t CoveredDecisions, size_t NumDecisions)
+      : CoveredPairs(CoveredPairs), NumPairs(NumPairs), CoveredDecisions(CoveredDecisions), NumDecisions(NumDecisions) {
     assert(CoveredPairs <= NumPairs && "Covered pairs over-counted");
+    assert(CoveredDecisions <= NumDecisions && "Covered decisions over-counted");
   }
 
   MCDCCoverageInfo &operator+=(const MCDCCoverageInfo &RHS) {
     CoveredPairs += RHS.CoveredPairs;
     NumPairs += RHS.NumPairs;
+    CoveredDecisions += RHS.CoveredDecisions;
+    NumDecisions += RHS.NumDecisions;
     return *this;
   }
 
   void merge(const MCDCCoverageInfo &RHS) {
     CoveredPairs = std::max(CoveredPairs, RHS.CoveredPairs);
     NumPairs = std::max(NumPairs, RHS.NumPairs);
+    CoveredDecisions = std::max(CoveredDecisions, RHS.CoveredDecisions);
+    NumDecisions = std::max(NumDecisions, RHS.NumDecisions);
   }
 
   size_t getCoveredPairs() const { return CoveredPairs; }
 
   size_t getNumPairs() const { return NumPairs; }
 
+  size_t getCoveredDecisions() const { return CoveredDecisions; }
+
+  size_t getNumDecisions() const { return NumDecisions; }
+
   bool isFullyCovered() const { return CoveredPairs == NumPairs; }
+
+  bool isDecisionFullyCovered() const { return CoveredDecisions == NumDecisions; }
 
   double getPercentCovered() const {
     assert(CoveredPairs <= NumPairs && "Covered pairs over-counted");
     if (NumPairs == 0)
       return 0.0;
     return double(CoveredPairs) / double(NumPairs) * 100.0;
+  }
+
+  double getDecisionPercentCovered() const {
+    assert(CoveredDecisions <= NumDecisions && "Covered decisions over-counted");
+    if (NumDecisions == 0)
+      return 0.0;
+    return double(CoveredDecisions) / double(NumDecisions) * 100.0;
   }
 };
 
