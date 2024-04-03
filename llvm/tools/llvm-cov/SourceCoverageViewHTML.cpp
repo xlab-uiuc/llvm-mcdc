@@ -1023,6 +1023,8 @@ void SourceCoverageViewHTML::renderMCDCView(raw_ostream &OS, MCDCView &MRV,
       OS << Record.getConditionCoverageString(i);
     OS << "  MC/DC Coverage for Expression: ";
     OS << format("%0.2f", Record.getPercentCovered()) << "%\n";
+    OS << "  Decision Coverage for Expression: ";
+    OS << format("%0.2f", Record.getDecisionPercentCovered()) << "%\n";
     OS << EndPre;
     OS << EndExpansionDiv;
   }

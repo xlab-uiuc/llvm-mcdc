@@ -390,6 +390,13 @@ void SourceCoverageViewText::renderMCDCView(raw_ostream &OS, MCDCView &MRV,
         << format("%0.2f", Record.getPercentCovered()) << "%";
     OS << "\n";
     renderLinePrefix(OS, ViewDepth);
+    OS << "  Decision Coverage: ";
+    colored_ostream(OS, raw_ostream::RED,
+                    getOptions().Colors && Record.getDecisionPercentCovered() < 100.0,
+                    /*Bold=*/false, /*BG=*/true)
+        << format("%0.2f", Record.getDecisionPercentCovered()) << "%";
+    OS << "\n";
+    renderLinePrefix(OS, ViewDepth);
     OS << "\n";
   }
 }
