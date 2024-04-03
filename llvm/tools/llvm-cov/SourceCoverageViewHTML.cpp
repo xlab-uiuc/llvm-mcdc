@@ -358,6 +358,10 @@ void emitTableRow(raw_ostream &OS, const CoverageViewOptions &Opts,
     AddCoverageTripleToColumn(FCS.MCDCCoverage.getCoveredPairs(),
                               FCS.MCDCCoverage.getNumPairs(),
                               FCS.MCDCCoverage.getPercentCovered());
+  if (Opts.ShowMCDCSummary)
+    AddCoverageTripleToColumn(FCS.MCDCCoverage.getCoveredDecisions(),
+                              FCS.MCDCCoverage.getNumDecisions(),
+                              FCS.MCDCCoverage.getDecisionPercentCovered());
 
   if (IsTotals)
     OS << tag("tr", join(Columns.begin(), Columns.end(), ""), "light-row-bold");
@@ -410,6 +414,8 @@ static void emitColumnLabelsForIndex(raw_ostream &OS,
     Columns.emplace_back(tag("td", "Branch Coverage", "column-entry-bold"));
   if (Opts.ShowMCDCSummary)
     Columns.emplace_back(tag("td", "MC/DC", "column-entry-bold"));
+  if (Opts.ShowMCDCSummary)
+    Columns.emplace_back(tag("td", "Decision", "column-entry-bold"));
   OS << tag("tr", join(Columns.begin(), Columns.end(), ""));
 }
 

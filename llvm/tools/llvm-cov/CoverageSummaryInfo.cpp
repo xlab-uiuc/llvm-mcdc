@@ -44,10 +44,15 @@ static void sumBranchExpansions(size_t &NumBranches, size_t &CoveredBranches,
   }
 }
 
-static std::pair<size_t, size_t>
-sumMCDCPairs(const ArrayRef<MCDCRecord> &Records) {
-  size_t NumPairs = 0, CoveredPairs = 0;
-  for (const auto &Record : Records) {
+void
+sumMCDCPairs(const ArrayRef<MCDCRecord> &Records,
+             size_t &NumPairs, size_t &CoveredPairs,
+             size_t &NumDecisions, size_t &CoveredDecisions) {
+  for (auto Record : Records) {
+
+    NumDecisions += 2;
+    CoveredDecisions += Record.getDecisionCovered();
+
     const auto NumConditions = Record.getNumConditions();
     for (unsigned C = 0; C < NumConditions; C++) {
       if (!Record.isCondFolded(C))
@@ -56,7 +61,6 @@ sumMCDCPairs(const ArrayRef<MCDCRecord> &Records) {
         ++CoveredPairs;
     }
   }
-  return {NumPairs, CoveredPairs};
 }
 
 FunctionCoverageSummary
@@ -89,14 +93,16 @@ FunctionCoverageSummary::get(const CoverageMapping &CM,
   sumBranchExpansions(NumBranches, CoveredBranches, CM, CD.getExpansions());
 
   size_t NumPairs = 0, CoveredPairs = 0;
-  std::tie(NumPairs, CoveredPairs) = sumMCDCPairs(CD.getMCDCRecords());
+  size_t NumDecisions = 0, CoveredDecisions = 0;
+  sumMCDCPairs(CD.getMCDCRecords(),
+    NumPairs, CoveredPairs, NumDecisions, CoveredDecisions);
 
   return FunctionCoverageSummary(
       Function.Name, Function.ExecutionCount,
       RegionCoverageInfo(CoveredRegions, NumCodeRegions),
       LineCoverageInfo(CoveredLines, NumLines),
       BranchCoverageInfo(CoveredBranches, NumBranches),
-      MCDCCoverageInfo(CoveredPairs, NumPairs));
+      MCDCCoverageInfo(CoveredPairs, NumPairs, CoveredDecisions, NumDecisions));
 }
 
 FunctionCoverageSummary
