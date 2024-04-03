@@ -548,6 +548,36 @@ public:
     return OS.str();
   }
 
+  float getDecisionPercentCovered() {
+    unsigned NumTestVectors = getNumTestVectors();
+    if (!NumTestVectors)
+      return 0.0;
+    bool TrueBranchTaken = false;
+    bool FalseBranchTaken = false;
+    for (unsigned i = 0; i < NumTestVectors; i++) {
+      switch (getTVResult(i)) {
+      case MCDC_True:
+        TrueBranchTaken = true;
+        break;
+      case MCDC_False:
+        FalseBranchTaken = true;
+        break;
+      case MCDC_DontCare:
+        llvm_unreachable("Test vector result should be either true or false.");
+      }
+    }
+    if (TrueBranchTaken)
+      if (FalseBranchTaken)
+        return 100.0;
+      else
+        return 50.0;
+    else
+      if (FalseBranchTaken)
+        return 50.0;
+      else
+        return 0.0;
+  }
+
   std::string getTestVectorString(unsigned TestVectorIndex) {
     assert(TestVectorIndex < getNumTestVectors() &&
            "TestVector index out of bounds!");
